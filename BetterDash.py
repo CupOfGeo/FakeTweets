@@ -6,6 +6,30 @@ import os
 import base64
 import random
 
+
+
+# from sqlalchemy.pool import NullPool
+# engine = create_engine(
+#     'postgresql+psycopg2://username:password@localhost/test',
+#     pool=NullPool)
+#
+#
+#
+# postgres+psycopg2://username:password@localhost:8050/test-database
+# @retry(wait=wait_exponential(multiplier=2, min=1, max=10), stop=stop_after_attempt(5))
+# def try_connection():
+#     try:
+#         with postgres_engine.connect() as connection:
+#             stmt = text("SELECT 1")
+#             connection.execute(stmt)
+#         print("Connection to database successful.")
+#
+#     except Exception as e:
+#         print("Connection to database failed, retrying.")
+#         raise Exception
+
+
+
 external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
 
 app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
@@ -44,9 +68,8 @@ def displayClick(btn1, btn2, btn3, btn4):
     if btn1+btn2 % len(imgs) == 0:
         random.shuffle(imgs)
      #tweet or faketweet
-    print(btn1+btn2)
     print(imgs[(btn1+btn2)%len(imgs)])
-
+    print('db_user' + os.getenv('DB_USER'))
 
     changed_id = [p['prop_id'] for p in dash.callback_context.triggered][0]
     if 'btn-nclicks-1' in changed_id:
