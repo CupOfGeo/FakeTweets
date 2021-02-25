@@ -91,7 +91,7 @@ def displayClick(btn1, btn2, btn3, btn4):
     if 'btn-nclicks-1' in changed_id:
         try:
 
-            cur.execute("INSERT INTO test (num, data) VALUES (1, '{}')".format(imgs[idx]))#,(str(imgs[idx])))
+            cur.execute("INSERT INTO test (num, data) VALUES (1, '{}')".format([idx])#,(str(imgs[idx])))
         except:
             print("droped button 1")
 
@@ -102,7 +102,7 @@ def displayClick(btn1, btn2, btn3, btn4):
 
     elif 'btn-nclicks-2' in changed_id:
         try:
-            cur.execute("INSERT INTO test (num, data) VALUES (2,'{}')".format(imgs[idx]))
+            cur.execute("INSERT INTO test (num, data) VALUES (2,'{}')".format([idx])
         except:
             print("droped button 2")
 
@@ -111,7 +111,7 @@ def displayClick(btn1, btn2, btn3, btn4):
 
     elif 'btn-nclicks-3' in changed_id:
         try:
-            cur.execute("INSERT INTO test (num, data) VALUES (3,'{}')".format(imgs[idx]))
+            cur.execute("INSERT INTO test (num, data) VALUES (3,'{}')".format([idx])
         except:
             print("droped button 3")
 
@@ -122,7 +122,7 @@ def displayClick(btn1, btn2, btn3, btn4):
 
     elif 'btn-nclicks-4' in changed_id:
         try:
-            cur.execute("INSERT INTO test (num, data) VALUES (4, '{}')".format(imgs[idx]))
+            cur.execute("INSERT INTO test (num, data) VALUES (4, '{}')".format([idx])
         except:
             print("droped button 4")
 
