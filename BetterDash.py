@@ -70,7 +70,7 @@ def displayClick(btn1, btn2, btn3, btn4):
     idx = btn1+btn2
 
 
-    text = df_temp.Tweet.iloc[idx_list[idx]]
+    text = df_temp.Tweet.iloc[idx_list[0]]
     text = "\n".join(textwrap.wrap(text, width=41))
     img_text = Image.new('RGB', (480, 28*len(text.split('\n'))), (255,255,255))
     d = ImageDraw.Draw(img_text)
@@ -93,42 +93,45 @@ def displayClick(btn1, btn2, btn3, btn4):
 
     if 'btn-nclicks-1' in changed_id:
         try:
-            cur.execute("INSERT INTO test (num, data) VALUES (1, '{}')".format([idx]))#,(str(imgs[idx])))
+            cur.execute("INSERT INTO test (num, data) VALUES (1, '{}')".format(idx_list[0]))
         except:
             print("droped button 1")
 
-        if df_temp.temp.iloc[idx_list[idx]] == 0:
+        if df_temp.temp.iloc[idx_list[0]] == 0:
             msg = 'Correct that was real'
         else:
             msg = "Wrong that was fake"
 
     elif 'btn-nclicks-2' in changed_id:
         try:
-            cur.execute("INSERT INTO test (num, data) VALUES (2,'{}')".format([idx]))
+            cur.execute("INSERT INTO test (num, data) VALUES (2,'{}')".format(idx_list[0]))
         except:
             print("droped button 2")
 
-        msg = 'BAD'
+        if df_temp.temp.iloc[idx_list[0]] == 0:
+            msg = "Bad Real tweet"
+        else:
+            msg = "Bad Fake tweet"
 
 
     elif 'btn-nclicks-3' in changed_id:
         try:
-            cur.execute("INSERT INTO test (num, data) VALUES (3,'{}')".format([idx]))
+            cur.execute("INSERT INTO test (num, data) VALUES (3,'{}')".format(idx_list[0]))
         except:
             print("droped button 3")
 
-        if df_temp.temp.iloc[idx_list[idx]] != 0:
+        if df_temp.temp.iloc[idx_list[0]] != 0:
             msg = 'Correct that was fake'
         else:
             msg = "Wrong that was real"
 
     elif 'btn-nclicks-4' in changed_id:
         try:
-            cur.execute("INSERT INTO test (num, data) VALUES (4, '{}')".format([idx]))
+            cur.execute("INSERT INTO test (num, data) VALUES (4, '{}')".format(idx_list[0]))
         except:
             print("droped button 4")
 
-        if df_temp.temp.iloc[idx_list[idx]] != 0:
+        if df_temp.temp.iloc[idx_list[0]] != 0:
             msg = 'Correct that was fake. Thanks will look into that'
         else:
             msg = "Wrong that was real hes just bad"
