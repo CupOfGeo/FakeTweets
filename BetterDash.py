@@ -37,6 +37,9 @@ app.layout = html.Div([
     html.Button('Fake ok but fix end', id='btn-nclicks-4', n_clicks=0),
 
     html.Div(id='container-button-timestamp')
+    #html.Div(id='intermediate-value', style={'display': 'none'})
+    #Output('intermediate-value', 'children')
+
 ])
 
 @app.callback(Output('container-button-timestamp', 'children'),
@@ -90,8 +93,7 @@ def displayClick(btn1, btn2, btn3, btn4):
 
     if 'btn-nclicks-1' in changed_id:
         try:
-
-            cur.execute("INSERT INTO test (num, data) VALUES (1, '{}')".format([idx])#,(str(imgs[idx])))
+            cur.execute("INSERT INTO test (num, data) VALUES (1, '{}')".format([idx]))#,(str(imgs[idx])))
         except:
             print("droped button 1")
 
@@ -102,7 +104,7 @@ def displayClick(btn1, btn2, btn3, btn4):
 
     elif 'btn-nclicks-2' in changed_id:
         try:
-            cur.execute("INSERT INTO test (num, data) VALUES (2,'{}')".format([idx])
+            cur.execute("INSERT INTO test (num, data) VALUES (2,'{}')".format([idx]))
         except:
             print("droped button 2")
 
@@ -111,7 +113,7 @@ def displayClick(btn1, btn2, btn3, btn4):
 
     elif 'btn-nclicks-3' in changed_id:
         try:
-            cur.execute("INSERT INTO test (num, data) VALUES (3,'{}')".format([idx])
+            cur.execute("INSERT INTO test (num, data) VALUES (3,'{}')".format([idx]))
         except:
             print("droped button 3")
 
@@ -122,7 +124,7 @@ def displayClick(btn1, btn2, btn3, btn4):
 
     elif 'btn-nclicks-4' in changed_id:
         try:
-            cur.execute("INSERT INTO test (num, data) VALUES (4, '{}')".format([idx])
+            cur.execute("INSERT INTO test (num, data) VALUES (4, '{}')".format([idx]))
         except:
             print("droped button 4")
 
@@ -146,6 +148,7 @@ def displayClick(btn1, btn2, btn3, btn4):
         conn.close()
     except:
         pass
+
 
     return html.Div(msg), out
 
