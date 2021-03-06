@@ -2,6 +2,7 @@ import dash_core_components as dcc
 import dash_html_components as html
 from dash.dependencies import Input, Output
 
+from app import server
 from app import app
 from apps import app1, app2
 from apps import BetterDash
