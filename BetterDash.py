@@ -9,6 +9,7 @@ import os
 import base64
 import random
 import json
+import random
 
 
 from sqlalchemy.pool import NullPool
@@ -32,6 +33,7 @@ server = app.server
 app.title='FAKENEWS'
 
 app.layout = html.Div([
+    html.Title("HELLO", id='tit'),
     dcc.Graph(id='score_map'),
     html.Img(id='tweet'),
 
@@ -43,6 +45,7 @@ app.layout = html.Div([
 
     html.Div(id='container-button-timestamp'),
 
+    dcc.Store(id='idx', storage_type='session'),
     dcc.Store(id='local', storage_type='session')
     #Output('intermediate-value', 'children')
 
@@ -63,7 +66,7 @@ def displayScore(ts, score):
     print(score)
 
     fig = px.imshow(score,
-                labels=dict(x="Actual", y="Your Guess", color="Productivity"),
+                labels=dict(x="Actual", y="Your Guess"),
                 x=['Real', 'Fake'],
                 y=['Real', 'Fake']
                )
@@ -72,21 +75,61 @@ def displayScore(ts, score):
     return fig
 
 
+@app.callback(Output('tweet', 'src'),Output('idx', 'data'),Input('local', 'data'),State('idx', 'data'))
+def displayTweet(s,rand_idx):
+
+    ctx = dash.callback_context
+    trigger_id = ctx.triggered[0]["prop_id"].split(".")[0]
+    print('CTX:',trigger_id, rand_idx,s)
+
+    rand_ind = random.randint(0, len(df))
+
+    cur = df.iloc[rand_ind]
+    text = cur.Tweet#.iloc[idx_list[0]]
+    print(text)
+    print(cur.temp)
+    print(rand_ind)
+    text = "\n".join(textwrap.wrap(text, width=41))
+    img_text = Image.new('RGB', (480, 28*len(text.split('\n'))), (255,255,255))
+    d = ImageDraw.Draw(img_text)
+    font = ImageFont.truetype(r'Tweet_template/EncodeSansSemiExpanded-Regular.ttf', 22)
+
+    d.text((17, 0), text, font=font, fill=(0, 0, 0))
+    #img_text.save( 'img_text.jpg' )
+    img_text
+
+    list_im = ['Tweet_template/img_top.jpg', 'Tweet_template/img_bot.jpg']
+    imgs    = [ PIL.Image.open(i) for i in list_im ]
+    imgs.insert(1,img_text)
+    min_shape = sorted( [(np.sum(i.size), i.size ) for i in imgs])[0][1]
+    imgs_comb = np.vstack(imgs)
+    imgs_comb = PIL.Image.fromarray(imgs_comb)
+    return imgs_comb, rand_ind
+
+
 
 
 @app.callback(Output('local', 'data'),
             Output('container-button-timestamp', 'children'),
-              Output('tweet', 'src'),
+              Input('idx','data'),
               Input('btn-nclicks-1', 'n_clicks'),
               Input('btn-nclicks-2', 'n_clicks'),
               Input('btn-nclicks-3', 'n_clicks'),
               Input('btn-nclicks-4', 'n_clicks'),
               State('local', 'data'))
-def displayClick(btn1, btn2, btn3, btn4, score):
+def displayClick(rand_ind,btn1, btn2, btn3, btn4, score):
     if btn1 is None or btn2 is None or btn3 is None or btn4 is None:
         raise PreventUpdate
+    print('FUCKKKSKKSKSKSKSK', rand_ind)
+
+
             # prevent the None callbacks is important with the store component.
             # you don't want to update the store for nothing.
+    changed_id = [p['prop_id'] for p in dash.callback_context.triggered][0]
+    print(dash.callback_context.triggered)
+
+
+
 
     #DATABASE
     try:
@@ -108,46 +151,16 @@ def displayClick(btn1, btn2, btn3, btn4, score):
     #score[3] is number of fake tweets you said were real
     score = score or [0,0,0,0]
 
-    #score = [int(s) for s in score.split(',')]
-    #print(score)
-    #GET TWEETS
-    df_temp = df.copy()
-    idx_list = list(range(len(df_temp)))
-    random.shuffle(idx_list)
-
-    idx = btn1+btn2
-
-    cur = df_temp.iloc[idx_list[0]]
-    text = cur.Tweet#.iloc[idx_list[0]]
-    print(text)
-    print(cur.temp)
-    text = "\n".join(textwrap.wrap(text, width=41))
-    img_text = Image.new('RGB', (480, 28*len(text.split('\n'))), (255,255,255))
-    d = ImageDraw.Draw(img_text)
-    font = ImageFont.truetype(r'Tweet_template/EncodeSansSemiExpanded-Regular.ttf', 22)
-
-    d.text((17, 0), text, font=font, fill=(0, 0, 0))
-    #img_text.save( 'img_text.jpg' )
-    img_text
-
-    list_im = ['Tweet_template/img_top.jpg', 'Tweet_template/img_bot.jpg']
-    imgs    = [ PIL.Image.open(i) for i in list_im ]
-    imgs.insert(1,img_text)
-    min_shape = sorted( [(np.sum(i.size), i.size ) for i in imgs])[0][1]
-    imgs_comb = np.vstack(imgs)
-    imgs_comb = PIL.Image.fromarray( imgs_comb)
 
 
-    changed_id = [p['prop_id'] for p in dash.callback_context.triggered][0]
-    print(dash.callback_context.triggered)
 
     if 'btn-nclicks-1' in changed_id:
         try:
-            cur.execute("INSERT INTO test (num, data) VALUES (1, '{}')".format(idx_list[0]))
+            cur.execute("INSERT INTO test (num, data) VALUES (1, '{}')".format(rand_ind))
         except:
             print("droped button 1")
 
-        if int(df_temp.temp.iloc[idx_list[0]]) == 0:
+        if df.temp.iloc[rand_ind] == 0:
             msg = 'Correct that was real'
             score[0] += 1
         else:
@@ -156,11 +169,11 @@ def displayClick(btn1, btn2, btn3, btn4, score):
 
     elif 'btn-nclicks-2' in changed_id:
         try:
-            cur.execute("INSERT INTO test (num, data) VALUES (2,'{}')".format(idx_list[0]))
+            cur.execute("INSERT INTO test (num, data) VALUES (2,'{}')".format(rand_ind))
         except:
             print("droped button 2")
 
-        if df_temp.temp.iloc[idx_list[0]] == 0:
+        if df.temp.iloc[rand_ind] == 0:
             msg = "Wrong that was a Real tweet"
             score[3] += 1
 
@@ -172,11 +185,11 @@ def displayClick(btn1, btn2, btn3, btn4, score):
 
     elif 'btn-nclicks-3' in changed_id:
         try:
-            cur.execute("INSERT INTO test (num, data) VALUES (3,'{}')".format(idx_list[0]))
+            cur.execute("INSERT INTO test (num, data) VALUES (3,'{}')".format(rand_ind))
         except:
             print("droped button 3")
 
-        if df_temp.temp.iloc[idx_list[0]] != 0:
+        if df.temp.iloc[rand_ind] != 0:
             msg = 'Correct that was fake'
             score[2] += 1
         else:
@@ -185,11 +198,11 @@ def displayClick(btn1, btn2, btn3, btn4, score):
 
     elif 'btn-nclicks-4' in changed_id:
         try:
-            cur.execute("INSERT INTO test (num, data) VALUES (4, '{}')".format(idx_list[0]))
+            cur.execute("INSERT INTO test (num, data) VALUES (4, '{}')".format(rand_ind))
         except:
             print("droped button 4")
 
-        if df_temp.temp.iloc[idx_list[0]] != 0:
+        if df.temp.iloc[rand_ind] != 0:
             msg = 'Correct that was fake. Thanks will look into that'
             score[2] += 1
         else:
@@ -202,10 +215,6 @@ def displayClick(btn1, btn2, btn3, btn4, score):
         msg = 'None of the buttons have been clicked yet'
         #raise PreventUpdate
 
-
-    #encoded_image = base64.b64encode(imgs_comb)
-    #out = 'data:image/png;base64,{}'.format(encoded_image.decode())
-    out = imgs_comb
     try:
         conn.commit() # <--- makes sure the change is shown in the database
         cur.close()
@@ -214,7 +223,8 @@ def displayClick(btn1, btn2, btn3, btn4, score):
         pass
 
     print(msg)
-    return score,html.Div(msg), out
+
+    return score,html.Div(msg)
 
 if __name__ == '__main__':
     app.run_server(debug=True)

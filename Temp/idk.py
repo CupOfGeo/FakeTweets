@@ -24,7 +24,6 @@ layout_page_1 = html.Div([
     html.Button(id='submit-button', n_clicks=0, children='Submit'),
     html.Div(id='output-state'),
     html.Br(),
-    dcc.Link('Navigate to "/"', href='/'),
     html.Br(),
     dcc.Link(html.Button(id='button',children='back',disabled=True), href='/page-2'),
 ])
