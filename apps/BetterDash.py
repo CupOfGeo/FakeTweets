@@ -24,7 +24,7 @@ from PIL import ImageDraw
 from PIL import ImageFont
 import textwrap
 
-df = pd.read_csv('../all_tweets.csv')
+df = pd.read_csv('all_tweets.csv')
 
 external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
 
@@ -98,13 +98,13 @@ def displayTweet(s,rand_idx):
     text = "\n".join(textwrap.wrap(text, width=39))
     img_text = Image.new('RGB', (480, 28*len(text.split('\n'))), (255,255,255))
     d = ImageDraw.Draw(img_text)
-    font = ImageFont.truetype(r'../Tweet_template/EncodeSansSemiExpanded-Regular.ttf', 22)
+    font = ImageFont.truetype(r'Tweet_template/EncodeSansSemiExpanded-Regular.ttf', 22)
 
     d.text((17, 0), text, font=font, fill=(0, 0, 0))
     #img_text.save( 'img_text.jpg' )
     img_text
 
-    list_im = ['../Tweet_template/img_top.jpg', '../Tweet_template/img_bot.jpg']
+    list_im = ['Tweet_template/img_top.jpg', 'Tweet_template/img_bot.jpg']
     imgs    = [ PIL.Image.open(i) for i in list_im ]
     imgs.insert(1,img_text)
     min_shape = sorted( [(np.sum(i.size), i.size ) for i in imgs])[0][1]

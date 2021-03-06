@@ -6,5 +6,5 @@ from app import app
 
 layout = html.Div([
     html.H3('Welcome!'),
-    dcc.Link('Go to App', href='Main')
+    dcc.Link('Go to App', href='/Main')
 ])
