@@ -1,1 +1,1 @@
-web: gunicorn BetterDash:server
+web: gunicorn index:server
