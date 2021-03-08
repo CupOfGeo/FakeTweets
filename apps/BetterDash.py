@@ -60,7 +60,7 @@ def displayScore(ts, score):
         raise PreventUpdate
 
     score = score or [0,0,0,0]
-    val = [[score[0],score[3]],[score[1],score[2]]]
+    val = [[score[0],score[1]],[score[3],score[2]]]
     #score is confusion matrix
     #score[0] is real tweets you said were real
     #score[1] is number of real tweets you said were fake
